@@ -2,6 +2,8 @@
 #define CALIBRATOR_H
 #include <memory>
 #include <array>
+#include <string>
+#include <vector>
 #include <TH1.h>
 #include <TFile.h>
 

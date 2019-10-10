@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <array>
+#include <memory>
 
 /**
  * Abstract base-class for peak finding classes. It defines the interface and
@@ -33,7 +34,7 @@ class PeakFinder {
      *         peaks are ordered from lowest to highest position.
      */
     virtual std::vector<std::array<double,2>> 
-                            Search(TH1 *spectrum, int nPeaks, double sigma) = 0;
+            Search(std::shared_ptr<TH1> spectrum, int nPeaks, double sigma) = 0;
 
 };
 #endif
