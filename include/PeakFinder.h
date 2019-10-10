@@ -32,7 +32,8 @@ class PeakFinder {
      *         the second entry holding the uncertainty on the position. The
      *         peaks are ordered from lowest to highest position.
      */
-    virtual std::vector<std::array<double,2>> Search(TH1 *spectrum, int nPeaks, double sigma) = 0;
+    virtual std::vector<std::array<double,2>> 
+                            Search(TH1 *spectrum, int nPeaks, double sigma) = 0;
 
 };
 #endif
