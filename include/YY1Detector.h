@@ -24,5 +24,5 @@ class YY1Detector : public Detector {
     virtual double GetSegSolidAngle(int i, TVector3 &pos);
     
     virtual double GetSolidAngle(Tvector3 &pos);
-
+};
 #endif
