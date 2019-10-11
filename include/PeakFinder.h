@@ -4,6 +4,7 @@
 #include <vector>
 #include <array>
 #include <memory>
+#include <TH1.h>
 
 /**
  * Abstract base-class for peak finding classes. It defines the interface and

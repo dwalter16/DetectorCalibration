@@ -53,7 +53,7 @@ target_link_libraries(calibrate
     DetectorCalibration
 )
 
-# Experimenting with doxygen...
+#Enable doxygen build by default.
 option(BUILD_DOC "Build documentation" ON)
 
 # check if Doxygen is installed
@@ -65,7 +65,6 @@ if (DOXYGEN_FOUND)
 
   # request to configure the file
   configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
-  message("Doxygen build started")
 
   # note the option ALL which allows to build the docs together with the application
   add_custom_target(documentation ALL
