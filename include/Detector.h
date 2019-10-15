@@ -12,16 +12,15 @@
  * thickness should be given in nanometers.
  */
 class Detector {
-  private:
+  protected:
     TVector3 position; /**< The x,y,z position of the detector.*/
     TVector3 normal;   /**< The normal vector to the detector surface.*/
     TVector3 orientation;
-    int nSegments;     /**< The number of active segments (channels).*/
     double deadLayer;  /**< Thickness of the detector dead layer*/
     
   public:
-    Detector();
-    ~Detector() = 0;
+    Detector() = default;
+    virtual ~Detector() = 0;
     
     /**
      * Factory method to create instances of the various detector classes.
@@ -91,6 +90,6 @@ class Detector {
      *            angle.
      * @return The calculated solid angle in steradians.
      */    
-    virtual double GetSolidAngle(Tvector3 &pos);
+    virtual double GetSolidAngle(TVector3 &pos);
 };
 #endif

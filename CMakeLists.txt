@@ -65,9 +65,10 @@ if (DOXYGEN_FOUND)
 
   # request to configure the file
   configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
+  message("-- To build documentation, type 'make documentation'.")
 
   # note the option ALL which allows to build the docs together with the application
-  add_custom_target(documentation ALL
+  add_custom_target(documentation
         COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Generating API documentation with Doxygen"

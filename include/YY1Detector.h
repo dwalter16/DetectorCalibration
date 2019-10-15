@@ -11,18 +11,18 @@ class YY1Detector : public Detector {
   private:
   
   public:
-    YY1Detector() = default;
+    YY1Detector();
     ~YY1Detector() = default;
     
     /**
      * Get the number of segments of the detector (16 for YY1).
      */
     virtual int GetNSegments();
-    
+
     virtual TVector3 GetSegPosition(int i);
     
     virtual double GetSegSolidAngle(int i, TVector3 &pos);
     
-    virtual double GetSolidAngle(Tvector3 &pos);
+    virtual double GetSolidAngle(TVector3 &pos);
 };
 #endif
