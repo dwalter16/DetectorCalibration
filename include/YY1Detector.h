@@ -12,7 +12,7 @@ class YY1Detector : public Detector {
   
   public:
     YY1Detector();
-    ~YY1Detector() = default;
+    virtual ~YY1Detector() = default;
     
     /**
      * Get the number of segments of the detector (16 for YY1).
@@ -23,6 +23,6 @@ class YY1Detector : public Detector {
     
     virtual double GetSegSolidAngle(int i, TVector3 &pos);
     
-    virtual double GetSolidAngle(TVector3 &pos);
+    //virtual double GetSolidAngle(TVector3 &pos);
 };
 #endif

@@ -44,7 +44,8 @@ find_package (ROOT REQUIRED)
 
 target_link_libraries(DetectorCalibration
   PUBLIC
-    ROOT::Libraries   
+    ROOT::Libraries
+    ROOT::Spectrum  #For TSpectrum
 )
 
 target_link_libraries(calibrate
@@ -67,7 +68,7 @@ if (DOXYGEN_FOUND)
   configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
   message("-- To build documentation, type 'make documentation'.")
 
-  # note the option ALL which allows to build the docs together with the application
+  # note: Add the option ALL to allow to build the docs together with the application
   add_custom_target(documentation
         COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}

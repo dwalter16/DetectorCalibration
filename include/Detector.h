@@ -20,7 +20,7 @@ class Detector {
     
   public:
     Detector() = default;
-    virtual ~Detector() = 0;
+    virtual ~Detector() = default;
     
     /**
      * Factory method to create instances of the various detector classes.

@@ -1,10 +1,28 @@
 #include <iostream>
+#include <cstdlib>
 #include "PeakFinder.h"
+#include "TSpectrumFinder.h"
 
 using namespace std;
-/*
-void PeakFinder::Print(string line)
+
+PeakFinder * PeakFinder::Create(string type)
 {
-  cout << line << endl;
+  if(type == "TSpectrum"){
+    return new TSpectrumFinder();
+  }
+  else{
+    cout << "PeakFinder::Create(): Unknown peak finding algorithm: " << type << endl;
+    exit(EXIT_FAILURE);
+  }
 }
-*/
+
+void PeakFinder::SetSigma(double sig)
+{
+  sigma = sig;
+}
+
+double PeakFinder::GetSigma()
+{
+  return sigma;
+}
+

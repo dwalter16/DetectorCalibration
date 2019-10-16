@@ -18,3 +18,8 @@ TVector3 YY1Detector::GetSegPosition(int i)
   TVector3 segPos = position + orientation * 5.*(i+0.5);
   return segPos;
 }
+
+double YY1Detector::GetSegSolidAngle(int i, TVector3 &pos)
+{
+  return 1.;
+}

@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <array>
+#include <TSpectrum.h>
 
 /**
  * Implementation of a peak finder using the TSpectrum class from ROOT.
@@ -14,12 +15,19 @@ class TSpectrumFinder : public PeakFinder {
     double threshold;
     
   public:
-    TSpectrumFinder() = default;
+    TSpectrumFinder() {threshold = 0.1;}
     ~TSpectrumFinder() = default;
 
     virtual std::vector<std::array<double,2>> 
-                Search(std::shared_ptr<TH1> spectrum, int nPeaks, double sigma);
+                              Search(std::shared_ptr<TH1> spectrum, int nPeaks);
     
+    /**
+     * This method allows you to run the TSpectrum search algorithm with one of
+     * the standard options. See the TSpectrum documentation.
+     */     
+    std::vector<std::array<double,2>> 
+          Search(std::shared_ptr<TH1> spectrum, int nPeaks, std::string option);
+
     /**
      * This method makes it possible for the user to directly interact with the
      * instance of TSpectrum owned by this class.
@@ -32,7 +40,7 @@ class TSpectrumFinder : public PeakFinder {
      *                  threshold * (amplitude of highest peak). Default value
      *                  is 0.1.
      */     
-    void SetThreshold(double threshold);
+    void SetThreshold(double thres);
 
     double GetThreshold();
 };
