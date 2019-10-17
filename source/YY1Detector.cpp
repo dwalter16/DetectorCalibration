@@ -2,8 +2,8 @@
 
 YY1Detector::YY1Detector()
 {
-  position.SetXYZ(0,0,0);
-  orientation.SetXYZ(1,0,0);
+  position.SetXYZ(0,0,-90.);
+  orientation.SetXYZ(0,1,0);
   normal.SetXYZ(0,0,1);
   deadLayer = 150.;
 }
@@ -21,5 +21,23 @@ TVector3 YY1Detector::GetSegPosition(int i)
 
 double YY1Detector::GetSegSolidAngle(int i, TVector3 &pos)
 {
-  return 1.;
+  double thetaBinEdge_low = 0;//deg
+  double thetaBinEdge_high = 0;//deg
+  double InnerRadius = 50.;//mm
+  double OuterRadius = 130.;//mm
+  double pitch = 5.; //mm
+  double YY1SolidAngle = 0;//msr
+  double pi = TMath::Pi();
+  double Zoffset = position.Z();//Detector position along z axis in mm
+
+  thetaBinEdge_high = std::atan2(OuterRadius-(15-i)*pitch,Zoffset) * (180./pi);
+  thetaBinEdge_low = std::atan2(OuterRadius-(15-i+1)*pitch,Zoffset) * (180./pi);
+
+  if(i==15) YY1SolidAngle = 0.5*(std::cos(thetaBinEdge_high*(pi/180.))-std::cos(thetaBinEdge_low*(pi/180.)))*4*pi*1000.*0.4;
+  else if(i==14) YY1SolidAngle = 0.5*(std::cos(thetaBinEdge_high*(pi/180.))-std::cos(thetaBinEdge_low*(pi/180.)))*4*pi*1000.*0.622;
+  else if(i==13) YY1SolidAngle = 0.5*(std::cos(thetaBinEdge_high*(pi/180.))-std::cos(thetaBinEdge_low*(pi/180.)))*4*pi*1000.*0.8;
+  else YY1SolidAngle = 0.5*(std::cos(thetaBinEdge_high*(pi/180.))-std::cos(thetaBinEdge_low*(pi/180.)))*4*pi*1000.*0.933;
+
+  return YY1SolidAngle/8.0;
+  
 }

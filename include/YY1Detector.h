@@ -21,8 +21,12 @@ class YY1Detector : public Detector {
 
     virtual TVector3 GetSegPosition(int i);
     
+    /**
+     * Get the solid angle of a given strip of a YY1 detector.
+     * @param i is the strip number with i=0 being the inner most strip
+     * @param pos is the TVector pointing to the calibration source location (currently not implemented! i.e. pos set to origin)
+     */
     virtual double GetSegSolidAngle(int i, TVector3 &pos);
     
-    //virtual double GetSolidAngle(TVector3 &pos);
 };
 #endif
