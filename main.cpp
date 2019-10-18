@@ -24,10 +24,10 @@ int main(int argc , char *argv[])
   cout << peaks.at(0).at(0) << "  " << peaks.at(0).at(1) << endl;
   */
 
-  YY1Detector fu;
+  YY1Detector Yu1;
   TVector3 source(0.,0.,0.);
   for(int i=0; i<16; i++){
-    cout << fu.GetSegSolidAngle(i,source) << endl;
+    cout << Yu1.GetSegSolidAngle(i,source) << "\t" << Yu1.GetEffectiveThickness(i,source) << endl;
   }
 
   return 0;

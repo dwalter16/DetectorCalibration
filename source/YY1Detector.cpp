@@ -15,7 +15,7 @@ int YY1Detector::GetNSegments()
 
 TVector3 YY1Detector::GetSegPosition(int i)
 {
-  TVector3 segPos = position + orientation * 5.*(i+0.5);
+  TVector3 segPos = position + orientation * (50 + i*5. + 0.5);
   return segPos;
 }
 
@@ -33,11 +33,24 @@ double YY1Detector::GetSegSolidAngle(int i, TVector3 &pos)
   thetaBinEdge_high = std::atan2(OuterRadius-(15-i)*pitch,Zoffset) * (180./pi);
   thetaBinEdge_low = std::atan2(OuterRadius-(15-i+1)*pitch,Zoffset) * (180./pi);
 
-  if(i==15) YY1SolidAngle = 0.5*(std::cos(thetaBinEdge_high*(pi/180.))-std::cos(thetaBinEdge_low*(pi/180.)))*4*pi*1000.*0.4;
-  else if(i==14) YY1SolidAngle = 0.5*(std::cos(thetaBinEdge_high*(pi/180.))-std::cos(thetaBinEdge_low*(pi/180.)))*4*pi*1000.*0.622;
-  else if(i==13) YY1SolidAngle = 0.5*(std::cos(thetaBinEdge_high*(pi/180.))-std::cos(thetaBinEdge_low*(pi/180.)))*4*pi*1000.*0.8;
-  else YY1SolidAngle = 0.5*(std::cos(thetaBinEdge_high*(pi/180.))-std::cos(thetaBinEdge_low*(pi/180.)))*4*pi*1000.*0.933;
+  if(i==15) YY1SolidAngle = 0.5*(std::cos(thetaBinEdge_high*(pi/180.))-std::cos(thetaBinEdge_low*(pi/180.)))*4*pi*1000.*0.291;
+  else if(i==14) YY1SolidAngle = 0.5*(std::cos(thetaBinEdge_high*(pi/180.))-std::cos(thetaBinEdge_low*(pi/180.)))*4*pi*1000.*0.543;
+  else if(i==13) YY1SolidAngle = 0.5*(std::cos(thetaBinEdge_high*(pi/180.))-std::cos(thetaBinEdge_low*(pi/180.)))*4*pi*1000.*0.735;
+  else YY1SolidAngle = 0.5*(std::cos(thetaBinEdge_high*(pi/180.))-std::cos(thetaBinEdge_low*(pi/180.)))*4*pi*1000.*0.883;
 
   return YY1SolidAngle/8.0;
+  
+}
+
+double YY1Detector::GetEffectiveThickness(int i, TVector3 &pos)
+{
+  
+  TVector3 segPos = GetSegPosition(i);
+  TVector3 sourceView = segPos - pos;
+
+  double invCos = 1./cos(TMath::Pi() - sourceView.Angle(normal));
+  double teff = deadLayer * invCos;
+
+  return teff;
   
 }
