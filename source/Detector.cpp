@@ -2,8 +2,10 @@
 #include "YY1Detector.h"
 #include <iostream>
 #include <cstdlib>
+#include <TMath.h>
 
 using namespace std;
+using namespace TMath;
 
 Detector * Detector::Create(string type)
 {
@@ -31,36 +33,42 @@ TVector3 Detector::GetPosition()
   return position;
 }
 
-void Detector::SetNormal(TVector3 &n)
-{
-  normal = n.Unit();
-}
-
-void Detector::SetNormal(double nx, double ny, double nz)
-{
-  normal.SetXYZ(nx,ny,nz);
-  normal.SetMag(1);
-}
-
 TVector3 Detector::GetNormal()
 {
   return normal;
 }
 
-void Detector::SetOrientation(TVector3 &ori)
-{
-  orientation = ori.Unit();
-}
-
-void Detector::SetOrientation(double ox, double oy, double oz)
-{
-  orientation.SetXYZ(ox,oy,oz);
-  orientation.SetMag(1);
-}
-
 TVector3 Detector::GetOrientation()
 {
   return orientation;
+}
+
+void Detector::RotateX(double angle)
+{
+  double radians = angle * DegToRad();
+  normal.RotateX(radians);
+  orientation.RotateX(radians);
+}
+ 
+void Detector::RotateY(double angle)
+{
+  double radians = angle * DegToRad();
+  normal.RotateY(radians);
+  orientation.RotateY(radians);
+}
+    
+void Detector::RotateZ(double angle)
+{
+  double radians = angle * DegToRad();
+  normal.RotateZ(radians);
+  orientation.RotateZ(radians);
+}
+    
+void Detector::Rotate(double angle, TVector3 &axis)
+{
+  double radians = angle * DegToRad();
+  normal.Rotate(radians,axis);
+  orientation.Rotate(radians,axis);
 }
 
 void Detector::SetDeadLayer(double dead_layer)

@@ -8,15 +8,18 @@
  * layer thickness and so on. Used as base class for more advanced detectors
  * with multiple active segments.
  *
+ * Instances of the Detector class are initialised with a standard position and
+ * orientation, but can later be moved and rotated.
+ *
  * The unit of the spatial coordinates should be millimeters and the dead layer
  * thickness should be given in nanometers.
  */
 class Detector {
   protected:
-    TVector3 position; /**< The x,y,z position of the detector.*/
-    TVector3 normal;   /**< The normal vector to the detector surface.*/
-    TVector3 orientation;
-    double deadLayer;  /**< Thickness of the detector dead layer*/
+    TVector3 position;    /**< The x,y,z position of the detector.*/
+    TVector3 normal;      /**< The normal vector to the detector surface.*/
+    TVector3 orientation; /**< A vector defining the orientation of the detector.*/
+    double deadLayer;     /**< Thickness of the detector dead layer*/
     
   public:
     Detector() = default;
@@ -30,32 +33,50 @@ class Detector {
      */
     static Detector * Create(std::string type);
     
+    /**
+     * Set a new position for the detector. See the documentation for the
+     * specific detector class to learn ho the detector geometry is related to
+     * the position.
+     */
     void SetPosition(TVector3 &pos);
     void SetPosition(double x, double y, double z);
     TVector3 GetPosition();
     
     /**
-     * Define the direction normal to the active detector surface. The input is
-     * automatically normalised.
+     * Get a unit vector normal to the detector surface.
      */
-    void SetNormal(TVector3 &n);
-    void SetNormal(double nx, double ny, double nz);
     TVector3 GetNormal();
     
     /**
-     * Provide the spatial orientation of the detector. The interpretation of
-     * this vector will be dependent on the specific detector class, and has no
-     * meaning for rotationally symmetric detectors (i.e. surface barrier
-     * detectors).
-     * @param ori The orientation vector.
-     */
-    void SetOrientation(TVector3 &ori);
-    void SetOrientation(double ox, double oy, double oz);
-
-    /**
-     * Get the normalised orientation vector.
+     * Get the normalised orientation vector. How the orientation is defined
+     * depends on the individual detector implementation.
      */
     TVector3 GetOrientation();
+    
+    /**
+     * Rotate the detector around the x-axis.
+     * @param angle Rotation angle in degrees.
+     */
+    void RotateX(double angle);
+ 
+     /**
+     * Rotate the detector around the y-axis.
+     * @param angle Rotation angle in degrees.
+     */   
+    void RotateY(double angle);
+    
+    /**
+     * Rotate the detector around the z-axis.
+     * @param angle Rotation angle in degrees.
+     */
+    void RotateZ(double angle);
+    
+    /**
+     * Rotate the detector around an arbitrary axis.
+     * @param angle Rotation angle in degrees.
+     * @param axis Vector specifying the axis of rotation.
+     */
+    void Rotate(double angle, TVector3 &axis);
     
     /**
      * Set the dead layer thickness in nm.
