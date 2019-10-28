@@ -112,5 +112,12 @@ class Detector {
      * @return The calculated solid angle in steradians.
      */
     virtual double GetSegSolidAngle(int i, TVector3 &pos) = 0;
+    
+    /**
+     * Get the effective thickness of the dead layer for a given detector segment/strip.
+     * @param i is the strip number with i=0 being the inner most strip
+     * @param pos is the TVector pointing to the calibration source location
+     */
+    virtual double GetEffectiveThickness(int i, TVector3 &pos);
 };
 #endif

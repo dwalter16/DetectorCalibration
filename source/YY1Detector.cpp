@@ -41,16 +41,3 @@ double YY1Detector::GetSegSolidAngle(int i, TVector3 &pos)
   return YY1SolidAngle/8.0;
   
 }
-
-double YY1Detector::GetEffectiveThickness(int i, TVector3 &pos)
-{
-  
-  TVector3 segPos = GetSegPosition(i);
-  TVector3 sourceView = segPos - pos;
-
-  double invCos = 1./cos(TMath::Pi() - sourceView.Angle(normal));
-  double teff = deadLayer * invCos;
-
-  return teff;
-  
-}

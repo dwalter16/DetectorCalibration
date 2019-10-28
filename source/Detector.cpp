@@ -94,3 +94,15 @@ double Detector::GetSolidAngle(TVector3 &pos)
   }
   return result;
 }
+
+double Detector::GetEffectiveThickness(int i, TVector3 &pos)
+{
+  TVector3 segPos = GetSegPosition(i);
+  TVector3 sourceView = segPos - pos;
+
+  double invCos = 1./Abs(normal.Dot(sourceView.Unit()));
+  //double invCos = 1./cos(TMath::Pi() - sourceView.Angle(normal));
+  double teff = deadLayer * invCos;
+
+  return teff;
+}

@@ -12,6 +12,12 @@ YY1Array::YY1Array()
     double angle = -i * 45.;
     d.RotateZ(angle);
   }
+  
+  //Same convention as the single YY1 detector.
+  position.SetXYZ(0,0,0);
+  normal.SetXYZ(0,0,1);
+  orientation.SetXYZ(0,1,0);
+  deadLayer = 150.;
 }
 
 int YY1Array::GetNSegments()
