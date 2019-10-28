@@ -1,5 +1,6 @@
 #include "Detector.h"
 #include "YY1Detector.h"
+#include "YY1Array.h"
 #include <iostream>
 #include <cstdlib>
 #include <TMath.h>
@@ -11,6 +12,9 @@ Detector * Detector::Create(string type)
 {
   if(type == "YY1"){
     return new YY1Detector();
+  }
+  else if(type == "YY1Array"){
+    return new YY1Array();
   }
   else{
     cout << "Detector::Create(): Unknown detector type: " << type << endl;

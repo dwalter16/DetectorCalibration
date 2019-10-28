@@ -38,8 +38,8 @@ class Detector {
      * specific detector class to learn ho the detector geometry is related to
      * the position.
      */
-    void SetPosition(TVector3 &pos);
-    void SetPosition(double x, double y, double z);
+    virtual void SetPosition(TVector3 &pos);
+    virtual void SetPosition(double x, double y, double z);
     TVector3 GetPosition();
     
     /**
@@ -57,32 +57,41 @@ class Detector {
      * Rotate the detector around the x-axis.
      * @param angle Rotation angle in degrees.
      */
-    void RotateX(double angle);
+    virtual void RotateX(double angle);
  
      /**
      * Rotate the detector around the y-axis.
      * @param angle Rotation angle in degrees.
      */   
-    void RotateY(double angle);
+    virtual void RotateY(double angle);
     
     /**
      * Rotate the detector around the z-axis.
      * @param angle Rotation angle in degrees.
      */
-    void RotateZ(double angle);
+    virtual void RotateZ(double angle);
     
     /**
      * Rotate the detector around an arbitrary axis.
      * @param angle Rotation angle in degrees.
      * @param axis Vector specifying the axis of rotation.
      */
-    void Rotate(double angle, TVector3 &axis);
+    virtual void Rotate(double angle, TVector3 &axis);
     
     /**
      * Set the dead layer thickness in nm.
      */     
     void SetDeadLayer(double dead_layer);
     double GetDeadLayer();
+
+    /**
+     * Find the total solid angle subtended by the detector as viewed from the
+     * given position.
+     * @param pos The position with respect to which to calculate the solid
+     *            angle.
+     * @return The calculated solid angle in steradians.
+     */    
+    virtual double GetSolidAngle(TVector3 &pos);
 
     //void SetNSegments(int n_segments);
     virtual int GetNSegments() = 0;
@@ -103,14 +112,5 @@ class Detector {
      * @return The calculated solid angle in steradians.
      */
     virtual double GetSegSolidAngle(int i, TVector3 &pos) = 0;
-    
-    /**
-     * Find the total solid angle subtended by the detector as viewed from the
-     * given position.
-     * @param pos The position with respect to which to calculate the solid
-     *            angle.
-     * @return The calculated solid angle in steradians.
-     */    
-    virtual double GetSolidAngle(TVector3 &pos);
 };
 #endif

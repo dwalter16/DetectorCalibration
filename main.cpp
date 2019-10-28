@@ -26,6 +26,7 @@ int main(int argc , char *argv[])
 
   YY1Detector Yu1;
   TVector3 source(0.,0.,0.);
+  Yu1.SetPosition(0.,0.,-90.);
   for(int i=0; i<16; i++){
     cout << Yu1.GetSegSolidAngle(i,source) << "\t" << Yu1.GetEffectiveThickness(i,source) << endl;
   }

@@ -3,9 +3,12 @@
 #include "Detector.h"
 
 /**
- * Detector class for the YY1 silicon detector from Mcron Semiconductor Ltd.
+ * Detector class for the YY1 silicon detector from Micron Semiconductor Ltd.
  * The specific geometry of the YY1 design is used to implement various
  * functions relating to positions, distances and solid angles.
+ *
+ * The YY1Detector is initialised with a position (0,0,0), a normal vector along
+ * the +z-direction and the orientation vector along the +y-direction.
  */
 class YY1Detector : public Detector {
   private:

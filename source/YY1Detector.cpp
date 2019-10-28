@@ -2,9 +2,9 @@
 
 YY1Detector::YY1Detector()
 {
-  position.SetXYZ(0,0,-90.);
-  orientation.SetXYZ(0,1,0);
+  position.SetXYZ(0,0,0);
   normal.SetXYZ(0,0,1);
+  orientation.SetXYZ(0,1,0);
   deadLayer = 150.;
 }
 
@@ -15,7 +15,7 @@ int YY1Detector::GetNSegments()
 
 TVector3 YY1Detector::GetSegPosition(int i)
 {
-  TVector3 segPos = position + orientation * (50 + i*5. + 0.5);
+  TVector3 segPos = position + orientation * (50 + 5.*(i+0.5));
   return segPos;
 }
 
