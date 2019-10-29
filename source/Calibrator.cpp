@@ -1,4 +1,5 @@
 #include "Calibrator.h"
+#include <iostream>
 #include <TGraphErrors.h>
 #include <TF1.h>
 #include <TPolyMarker.h>
@@ -26,15 +27,13 @@ array<double,2> Calibrator::Calibrate(shared_ptr<TH1> spectrum, TF1 &func,
     graph.SetPoint(i,positions.at(i).at(0),energies.at(i));
     graph.SetPointError(i,0,positions.at(i).at(1));
   }
-  
-  graph.Fit(&func,"0");
+  graph.Fit(&func,"Q");
   
   array<double,2> result;
   result.at(0) = func.GetParameter(0);
   result.at(1) = func.GetParameter(1);
   
   if(logFile){
-    logFile->cd();
     //We plot the peak positions on the spectrum and save.
     vector<double> pos_vec;
     vector<double> heights;
@@ -42,11 +41,12 @@ array<double,2> Calibrator::Calibrate(shared_ptr<TH1> spectrum, TF1 &func,
       pos_vec.push_back(positions.at(i).at(0));
       heights.push_back(spectrum->GetBinContent(spectrum->FindBin(positions.at(i).at(0))));
     }
-    TPolyMarker pm(nPeaks, pos_vec.data(), heights.data());
-    spectrum->GetListOfFunctions()->Add(&pm);
-    pm.SetMarkerStyle(23);
-    pm.SetMarkerColor(kRed);
-    pm.SetMarkerSize(1.3);
+    //I tried creating the TPolyMarker on the stack, but then ROOT and memory management...
+    TPolyMarker * pm = new TPolyMarker(nPeaks, pos_vec.data(), heights.data());
+    spectrum->GetListOfFunctions()->Add(pm);
+    pm->SetMarkerStyle(23);
+    pm->SetMarkerColor(kRed);
+    pm->SetMarkerSize(1.3);
     spectrum->Write("foundPeaks");
     
     //Store the linear fit.
@@ -94,6 +94,42 @@ vector<array<double,2>> Calibrator::Calibrate(vector<shared_ptr<TH1>> spectra,
   
   if(logFile){
     calDir->cd();
+    EvalAndLog(spectra,result);
+  }
+  return result;
+}
+
+vector<array<double,2>> Calibrator::Calibrate(vector<shared_ptr<TH1>> spectra,
+                                               vector<vector<double>> energies)
+{
+  TDirectory *calDir;
+  if(logFile) calDir = logFile->mkdir("calibrationResults");
+    
+  vector<array<double,2>> result;
+  for(int i=0; i<spectra.size(); i++){
+    if(logFile){
+      char dirName[64];
+      sprintf(dirName,"channel_%d",i);
+      calDir->cd();
+      TDirectory *chanDir = calDir->mkdir(dirName);
+      chanDir->cd();
+    }
+    shared_ptr<TH1> si = spectra.at(i);
+    vector<double> ei = energies.at(i);
+    result.push_back(Calibrate(si,ei));
+  }
+    
+  if(logFile){
+    calDir->cd();
+    EvalAndLog(spectra,result);
+  }
+  return result; 
+}
+
+void Calibrator::EvalAndLog(vector<shared_ptr<TH1>> spectra,
+                                                vector<array<double,2>> result)
+{
+  if(logFile){
     //Show all the gains and pedestals together.
     TGraph gGain, gPed;
     gGain.SetMarkerStyle(20);
@@ -131,19 +167,6 @@ vector<array<double,2>> Calibrator::Calibrate(vector<shared_ptr<TH1>> spectra,
     }
     hist.Write();
   }
-  return result;
-}
-
-vector<array<double,2>> Calibrator::Calibrate(vector<shared_ptr<TH1>> spectra,
-                                               vector<vector<double>> energies)
-{
-  vector<array<double,2>> result;
-  for(int i=0; i<spectra.size(); i++){
-    shared_ptr<TH1> si = spectra.at(i);
-    vector<double> ei = energies.at(i);
-    result.push_back(Calibrate(si,ei));
-  }
-  return result; 
 }
 
 void Calibrator::SetPeakFinder(string type)

@@ -19,7 +19,10 @@ class Calibrator {
     std::shared_ptr<PeakFinder> peakFinder;
     
     std::array<double,2> Calibrate(std::shared_ptr<TH1> spectrum, TF1 &func,
-                                                  std::vector<double> energies);   
+                                                  std::vector<double> energies);
+                                                  
+    void EvalAndLog(std::vector<std::shared_ptr<TH1>> spectra,
+                                      std::vector<std::array<double,2>> result);
     
   public:
     /**
