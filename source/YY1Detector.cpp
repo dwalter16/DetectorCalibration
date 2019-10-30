@@ -21,23 +21,48 @@ TVector3 YY1Detector::GetSegPosition(int i)
 
 double YY1Detector::GetSegSolidAngle(int i, TVector3 &pos)
 {
-  double thetaBinEdge_low = 0;//deg
-  double thetaBinEdge_high = 0;//deg
   double InnerRadius = 50.;//mm
   double OuterRadius = 130.;//mm
   double pitch = 5.; //mm
-  double YY1SolidAngle = 0;//msr
   double pi = TMath::Pi();
-  double Zoffset = position.Z();//Detector position along z axis in mm
-
-  thetaBinEdge_high = std::atan2(OuterRadius-(15-i)*pitch,Zoffset) * (180./pi);
-  thetaBinEdge_low = std::atan2(OuterRadius-(15-i+1)*pitch,Zoffset) * (180./pi);
-
-  if(i==15) YY1SolidAngle = 0.5*(std::cos(thetaBinEdge_high*(pi/180.))-std::cos(thetaBinEdge_low*(pi/180.)))*4*pi*1000.*0.291;
-  else if(i==14) YY1SolidAngle = 0.5*(std::cos(thetaBinEdge_high*(pi/180.))-std::cos(thetaBinEdge_low*(pi/180.)))*4*pi*1000.*0.543;
-  else if(i==13) YY1SolidAngle = 0.5*(std::cos(thetaBinEdge_high*(pi/180.))-std::cos(thetaBinEdge_low*(pi/180.)))*4*pi*1000.*0.735;
-  else YY1SolidAngle = 0.5*(std::cos(thetaBinEdge_high*(pi/180.))-std::cos(thetaBinEdge_low*(pi/180.)))*4*pi*1000.*0.883;
-
-  return YY1SolidAngle/8.0;
+  double ThetaStripSubtend[16];
+  for(int m=0; m<16; m++){
+    if(i==15) ThetaStripSubtend[m] = 13.102*(pi/180.);
+    else if(i==14) ThetaStripSubtend[m] = 24.5*(pi/180.);
+    else if(i==13) ThetaStripSubtend[m] = 33.07*(pi/180.);
+    else ThetaStripSubtend[m] = 39.756*(pi/180.);   
+  }
   
+  const int ner = 6;//Number of radial elements
+  const int net = 6;//Number of angular elements
+
+  double cosangleBetween[ner][net]={0};
+  double dist[ner][net]={0};
+  double AreaElement[ner][net]={0};
+  double SAElement[ner][net]={0};
+  double SAstripTotal = 0;
+
+  TVector3 element;
+  TVector3 view;
+
+  for(int j=0; j<ner; j++){
+    for(int k=0; k<net; k++){
+       
+      double rseg= InnerRadius + i*pitch + (0.5+j)*(pitch/ner);
+      double tseg = -ThetaStripSubtend[i]/2. + (0.5+k)*(ThetaStripSubtend[i]/net);
+
+      element = rseg*orientation;
+      element.Rotate(tseg,normal);
+      view = (position + element) - pos; //view of strip element from source position
+      cosangleBetween[j][k] = abs(normal.Dot(view.Unit()));
+      dist[j][k] = view.Mag(); 
+      AreaElement[j][k] = (pitch/ner)*(element.Mag()*ThetaStripSubtend[i]/net);//Approximate area of element
+      SAElement[j][k] = AreaElement[j][k] * cosangleBetween[j][k] / (dist[j][k]*dist[j][k]);
+
+      SAstripTotal += SAElement[j][k];
+	
+    }
+  }
+  
+  return SAstripTotal;
 }
