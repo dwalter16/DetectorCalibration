@@ -17,7 +17,7 @@ int main(int argc , char *argv[])
   TF1 f("f","TMath::Gaus(x,1000,10)+TMath::Gaus(x,2000,15)",0,4096);
   vector<shared_ptr<TH1>> spectra;
   vector<vector<double>> energies;
-  for(int i=0; i<100; i++){
+  for(int i=0; i<10; i++){
     char name[32];
     sprintf(name,"h_%d",i);
     shared_ptr<TH1I> h(new TH1I(name,"",4096,0,4096));

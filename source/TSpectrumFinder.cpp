@@ -6,8 +6,11 @@ using namespace std;
 
 vector<array<double,2>> TSpectrumFinder::Search(shared_ptr<TH1> spectrum, int nPeaks, string option)
 {
-  //First, we let TSpectrum search for some peaks.
-  tSpectrum.Search(spectrum.get(),sigma,option.c_str(),threshold);
+  //First, we limit the range of the histogram to be searched.
+  spectrum->GetXaxis()->SetRangeUser(lowThreshold,highThreshold);
+  
+  //Then we let TSpectrum search for some peaks.
+  tSpectrum.Search(spectrum.get(),sigma,option.c_str(),minHeight);
   
   //Check if something went wrong. More peaks than requested is ok, but not less.
   if(tSpectrum.GetNPeaks() < nPeaks){
@@ -51,16 +54,6 @@ vector<array<double,2>> TSpectrumFinder::Search(shared_ptr<TH1> spectrum, int nP
 vector<array<double,2>> TSpectrumFinder::Search(shared_ptr<TH1> spectrum, int nPeaks)
 {
   return Search(spectrum,nPeaks,"goff,nodraw");
-}
-
-void TSpectrumFinder::SetThreshold(double thres)
-{
-  threshold = thres;
-}
-
-double TSpectrumFinder::GetThreshold()
-{
-  return threshold;
 }
 
 TSpectrum & TSpectrumFinder::GetTSpectrum()

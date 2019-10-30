@@ -21,6 +21,10 @@ class Detector {
     TVector3 orientation; /**< A vector defining the orientation of the detector.*/
     double deadLayer;     /**< Thickness of the detector dead layer*/
     
+    std::string energyBranch;
+    std::string channelBranch;
+    
+    
   public:
     Detector() = default;
     virtual ~Detector() = default;
@@ -35,11 +39,14 @@ class Detector {
     
     /**
      * Set a new position for the detector. See the documentation for the
-     * specific detector class to learn ho the detector geometry is related to
+     * specific detector class to learn how the detector geometry is related to
      * the position.
      */
     virtual void SetPosition(TVector3 &pos);
     virtual void SetPosition(double x, double y, double z);
+    void SetX(double x);
+    void SetY(double y);
+    void SetZ(double z);
     TVector3 GetPosition();
     
     /**
@@ -119,5 +126,13 @@ class Detector {
      * @param pos is the TVector pointing to the calibration source location
      */
     virtual double GetEffectiveThickness(int i, TVector3 &pos);
+    
+    void SetEnergyBranch(std::string branchName);
+    
+    void SetChannelBranch(std::string branchName);
+    
+    std::string GetEnergyBranch();
+    
+    std::string GetChannelBranch();
 };
 #endif

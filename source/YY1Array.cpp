@@ -41,6 +41,7 @@ double YY1Array::GetSegSolidAngle(int i, TVector3 &pos)
 
 void YY1Array::SetPosition(TVector3 &pos)
 {
+  Detector::SetPosition(pos);
   for(YY1Detector &d : detectors){
     d.SetPosition(pos);
   }
@@ -48,6 +49,7 @@ void YY1Array::SetPosition(TVector3 &pos)
 
 void YY1Array::SetPosition(double x, double y, double z)
 {
+  Detector::SetPosition(x,y,z);
   for(YY1Detector &d : detectors){
     d.SetPosition(x,y,z);
   }
@@ -55,6 +57,7 @@ void YY1Array::SetPosition(double x, double y, double z)
 
 void YY1Array::RotateX(double angle)
 {
+  Detector::RotateX(angle);
   for(YY1Detector &d : detectors){
     d.RotateX(angle);
   }
@@ -62,6 +65,7 @@ void YY1Array::RotateX(double angle)
 
 void YY1Array::RotateY(double angle)
 {
+  Detector::RotateY(angle);
   for(YY1Detector &d : detectors){
     d.RotateY(angle);
   } 
@@ -69,6 +73,7 @@ void YY1Array::RotateY(double angle)
 
 void YY1Array::RotateZ(double angle)
 {
+  Detector::RotateZ(angle);
   for(YY1Detector &d : detectors){
     d.RotateZ(angle);
   } 
@@ -76,6 +81,7 @@ void YY1Array::RotateZ(double angle)
 
 void YY1Array::Rotate(double angle, TVector3 &axis)
 {
+  Detector::Rotate(angle,axis);
   for(YY1Detector &d : detectors){
     d.Rotate(angle,axis);
   } 

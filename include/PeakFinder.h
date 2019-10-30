@@ -13,10 +13,14 @@
  */
 class PeakFinder {
   protected:
-    double sigma; /**< The expected width of the peaks to be searched for.*/
+    double sigma;     /**< The expected width of the peaks to be searched for.*/
+    double lowThreshold;
+    double highThreshold;
+    double minHeight;
     
   public:
-    PeakFinder() {sigma = 3.;};
+    PeakFinder() 
+      {sigma = 10.; lowThreshold = 0; highThreshold = 4096; minHeight = 0.1;};
     virtual ~PeakFinder() = default;
 
     /**
@@ -46,5 +50,22 @@ class PeakFinder {
     void SetSigma(double sig);
 
     double GetSigma();
+    
+    void SetLowThreshold(double threshold);
+    
+    void SetHighThreshold(double threshold);
+    
+    /**
+     * Set a threshold on the amplitude of the peaks returned by the algorithm.
+     * @param height The algorithm excludes peaks with height less than
+     *               height * (amplitude of highest peak). Default value is 0.1.
+     */ 
+    void SetMinHeight(double height);
+    
+    double GetLowThreshold();
+    
+    double GetHighThreshold();
+    
+    double GetMinHeight();
 };
 #endif

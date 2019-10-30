@@ -32,6 +32,27 @@ void Detector::SetPosition(double x, double y, double z)
   position.SetXYZ(x,y,z);
 }
 
+void Detector::SetX(double x)
+{
+  TVector3 pos = GetPosition();
+  pos.SetX(x);
+  SetPosition(pos);
+}
+
+void Detector::SetY(double y)
+{
+  TVector3 pos = GetPosition();
+  pos.SetY(y);
+  SetPosition(pos);
+}
+
+void Detector::SetZ(double z)
+{
+  TVector3 pos = GetPosition();
+  pos.SetZ(z);
+  SetPosition(pos);
+}
+
 TVector3 Detector::GetPosition()
 {
   return position;
@@ -105,4 +126,24 @@ double Detector::GetEffectiveThickness(int i, TVector3 &pos)
   double teff = deadLayer * invCos;
 
   return teff;
+}
+
+void Detector::SetEnergyBranch(string branchName)
+{
+  energyBranch = branchName;
+}
+    
+void Detector::SetChannelBranch(string branchName)
+{
+  channelBranch = branchName;
+}
+    
+string Detector::GetEnergyBranch()
+{
+  return energyBranch;
+}
+    
+string Detector::GetChannelBranch()
+{
+  return channelBranch;
 }

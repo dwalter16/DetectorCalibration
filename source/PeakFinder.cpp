@@ -26,3 +26,32 @@ double PeakFinder::GetSigma()
   return sigma;
 }
 
+void PeakFinder::SetLowThreshold(double threshold)
+{
+  lowThreshold = threshold;
+}
+    
+void PeakFinder::SetHighThreshold(double threshold)
+{
+  highThreshold = threshold;
+}
+
+void PeakFinder::SetMinHeight(double height)
+{
+  minHeight = height;
+}
+    
+double PeakFinder::GetLowThreshold()
+{
+  return lowThreshold;
+}
+    
+double PeakFinder::GetHighThreshold()
+{
+  return highThreshold;
+}
+
+double PeakFinder::GetMinHeight()
+{
+  return minHeight;
+}

@@ -12,10 +12,9 @@
 class TSpectrumFinder : public PeakFinder {
   private:
     TSpectrum tSpectrum;
-    double threshold;
     
   public:
-    TSpectrumFinder() {threshold = 0.1;}
+    TSpectrumFinder() = default;
     ~TSpectrumFinder() = default;
 
     virtual std::vector<std::array<double,2>> 
