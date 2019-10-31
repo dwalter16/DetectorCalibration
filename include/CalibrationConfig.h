@@ -33,5 +33,6 @@ class CalibrationConfig {
     
     std::shared_ptr<PeakFinder> GetPeakFinder();
     
+    std::shared_ptr<Source> GetSource();    
 };
 #endif

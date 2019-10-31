@@ -126,8 +126,8 @@ string CalibrationConfig::GetOption(string &line)
 {
   size_t pos = line.find_first_not_of(" ");
   if(pos != 2){
-    cout << "CalibrationConfig()::GetOption(): This line does not specify an option: \"";
-    cout << line << "\"" << endl;
+    //cout << "CalibrationConfig()::GetOption(): This line does not specify an option: \"";
+    //cout << line << "\"" << endl;
     return "";
   }
   else{
@@ -148,4 +148,9 @@ shared_ptr<Detector> CalibrationConfig::GetDetector()
 shared_ptr<PeakFinder> CalibrationConfig::GetPeakFinder()
 {
   return peakFinder;
+}
+
+shared_ptr<Source> CalibrationConfig::GetSource()
+{
+  return source;
 }

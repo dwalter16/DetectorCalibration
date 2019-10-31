@@ -4,12 +4,20 @@
 #include <memory>
 #include <cstdlib>
 #include <vector>
+#include <array>
+#include <fstream>
 #include <TF1.h>
+#include <TH1.h>
 #include <TH1I.h>
+#include <TH2I.h>
 #include <TVector3.h>
-#include "TSpectrumFinder.h"
-#include "YY1Detector.h"
+#include <TFile.h>
+#include <TTree.h>
+#include "Source.h"
+#include "PeakFinder.h"
+#include "Detector.h"
 #include "Calibrator.h"
+#include "CalibrationConfig.h"
 
 using namespace std;
 
@@ -38,7 +46,7 @@ int main(int argc , char *argv[])
         PrintHelp(argv);
         return 1;
       default:
-        exit(EXIT_FAILURE);
+        return 1;
     }
   }
 
@@ -46,14 +54,65 @@ int main(int argc , char *argv[])
     dataFile = argv[optind];
   }
   else{
+    cout << "Exactly one data file must be provided." << endl;
     PrintHelp(argv);
     return 1;
   }
+
+  //Then we load the configuration file and construct the necessary objects.
+  if(configFile.empty()){
+    cout << "No configuration file provided." << endl;
+    PrintHelp(argv);
+    return 1;
+  }
+  CalibrationConfig config;
+  config.Parse(configFile);
+  shared_ptr<Source> source = config.GetSource();
+  shared_ptr<Detector> detector = config.GetDetector();
+  shared_ptr<PeakFinder> peakFinder = config.GetPeakFinder();
+  Calibrator calibrator;
+  calibrator.SetPeakFinder(peakFinder);
+  if(!logFile.empty()) calibrator.SetLogFile(logFile);
   
-  cout << configFile << endl;
-  cout << logFile << endl;
-  cout << outputFile << endl;
-  cout << dataFile << endl;
+  //Here, a sophisticated calculation of the energy loss for each segment follows...
+  int nChannels = detector->GetNSegments();
+  vector<vector<double>> energies;
+  for(int i=0; i<nChannels; i++){
+    vector<double> energies_i;
+    int nPeaks = source->GetNPeaks();
+    for(int j=0; j<nPeaks; j++){
+      energies_i.push_back(source->GetPeak(j));
+    }
+    energies.push_back(energies_i);
+  }
+  
+  //Then we produce the histograms from the data file.
+  TFile data(dataFile.c_str(),"READ");
+  TTree *tree = (TTree*)data.Get("Iris");
+  TH2I hist("hist","",nChannels,-0.5,nChannels-0.5,4096,-0.5,4095.5);
+  string drawCmd = detector->GetEnergyBranch() + ":" + detector->GetChannelBranch() + ">>hist";
+  tree->Draw(drawCmd.c_str());
+  hist.SetDirectory(0);
+  data.Close();
+  vector<shared_ptr<TH1>> spectra;
+  for(int i=1; i<=nChannels; i++){
+    string histName = "channel_" + to_string(i-1);
+    shared_ptr<TH1> channelSpectrum =
+         shared_ptr<TH1>((TH1*)hist.ProjectionY(histName.c_str(),i,i)->Clone());
+    spectra.push_back(channelSpectrum);
+  }
+  
+  //Then we are ready to run the calibration routine.
+  vector<array<double,2>> result = calibrator.Calibrate(spectra,energies);
+  if(!outputFile.empty()){
+    ofstream output(outputFile);
+    output << "ch  offset  gain" << endl;
+    for(int i=0; i<nChannels; i++){
+      output << i << "  " << result.at(i).at(1) << "  " << result.at(i).at(0) << endl;
+    }
+    output.close();
+  }
+    
   
   /*
   TF1 f("f","TMath::Gaus(x,1000,10)+TMath::Gaus(x,2000,15)",0,4096);
@@ -98,4 +157,3 @@ void PrintHelp(char *argv[])
   cout << "Example:" << endl;
   cout << argv[0] << " -c /config/file -o /output/file /data/file" << endl;
 }
-  
