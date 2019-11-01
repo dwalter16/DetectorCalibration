@@ -1,5 +1,5 @@
-#ifndef CALIBRATION_CONFIG_H
-#define CALIBRATION_CONFIG_H
+#ifndef CONFIG_PARSER_H
+#define CONFIG_PARSER_H
 #include "Detector.h"
 #include "PeakFinder.h"
 #include "Source.h"
@@ -8,7 +8,7 @@
 #include <string>
 #include <fstream>
 
-class CalibrationConfig {
+class ConfigParser {
   private:
     std::shared_ptr<Detector> detector;
     std::shared_ptr<PeakFinder> peakFinder;
@@ -28,10 +28,12 @@ class CalibrationConfig {
     Options * BuildOptions(std::ifstream &configFile);
     
   public:
-    CalibrationConfig() = default;
-    ~CalibrationConfig() = default;
+    ConfigParser(std::string fileName = "");
+    ~ConfigParser() = default;
     
     void Parse(std::string fileName);
+    
+    void PrintConfiguration();
     
     std::shared_ptr<Detector> GetDetector();
     

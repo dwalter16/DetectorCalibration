@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <string>
+#include <sstream>
 #include <iostream>
 #include <memory>
 #include <cstdlib>
@@ -16,7 +17,7 @@
 #include "Detector.h"
 #include "Calibrator.h"
 #include "Options.h"
-#include "CalibrationConfig.h"
+#include "ConfigParser.h"
 
 using namespace std;
 
@@ -25,9 +26,9 @@ void PrintHelp(char *argv[]);
 int main(int argc , char *argv[])
 {
   //Parse the input.
-  string configFile, logFile, outputFile, dataFile;
+  string configFile, logFile, outputFile, dataFile, pedFile;
   int c;
-  while((c = getopt(argc, argv,"c:o:l:h")) != -1){
+  while((c = getopt(argc, argv,"c:o:l:hp:")) != -1){
     switch (c){
       case 'c':
         configFile = optarg;
@@ -37,6 +38,9 @@ int main(int argc , char *argv[])
         break;
       case 'o':
         outputFile = optarg;
+        break;
+      case 'p':
+        pedFile = optarg;
         break;
       case 'h':
         PrintHelp(argv);
@@ -64,8 +68,7 @@ int main(int argc , char *argv[])
     PrintHelp(argv);
     return 1;
   }
-  CalibrationConfig config;
-  config.Parse(configFile);
+  ConfigParser config(configFile);
   shared_ptr<Source> source = config.GetSource();
   shared_ptr<Detector> detector = config.GetDetector();
   shared_ptr<PeakFinder> peakFinder = config.GetPeakFinder();
@@ -102,8 +105,28 @@ int main(int argc , char *argv[])
     spectra.push_back(channelSpectrum);
   }
   
+  //If pedestal file is provided, load...
+  vector<double> pedestals;
+  if(!pedFile.empty()){
+    ifstream pedestalFile(pedFile);
+    string line;
+    getline(pedestalFile,line); //First line is for comments.
+    while(getline(pedestalFile,line)){
+      stringstream ss(line);
+      int channel; double pedestal;
+      ss >> channel >> pedestal ;
+      pedestals.push_back(pedestal);
+    }
+  }
+  if(pedestals.size() != nChannels){
+    cout << "Pedestal file does not contain the expected number of values.";
+    return 1;
+  }
+    
   //Then we are ready to run the calibration routine.
-  vector<array<double,2>> result = calibrator.Calibrate(spectra,energies);
+  vector<array<double,2>> result;
+  if(!pedestals.empty()) result = calibrator.Calibrate(spectra,energies,pedestals);
+  else result = calibrator.Calibrate(spectra,energies);
   
   //..and store the output in a plain text file.
   if(!outputFile.empty()){
@@ -123,6 +146,7 @@ void PrintHelp(char *argv[])
 {
   cout << "Usage: " << argv[0] << " [OPTIONS] ... [DATAFILE]" << endl;
   cout << "Detector energy calibration based on the data in [DATAFILE]." << endl;
+  cout << "Available options:" << endl;
   cout << endl;
   cout << "  -c [FILE]      Load configuration from [FILE] (required)." << endl;
   cout << "  -h             Print this message." << endl;

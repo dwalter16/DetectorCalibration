@@ -1,10 +1,15 @@
-#include "CalibrationConfig.h"
+#include "ConfigParser.h"
 #include <iostream>
 #include <cstdlib>
 
 using namespace std;
 
-void CalibrationConfig::Parse(string fileName)
+ConfigParser::ConfigParser(string fileName)
+{
+  if(!fileName.empty()) Parse(fileName);
+}
+
+void ConfigParser::Parse(string fileName)
 {
   string line;
   ifstream configFile(fileName);
@@ -22,21 +27,21 @@ void CalibrationConfig::Parse(string fileName)
       options = shared_ptr<Options>(BuildOptions(configFile));
     }
     else{
-      cout << "CalibrationConfig::Parse(): Unknown option: " ;
+      cout << "ConfigParser::Parse(): Unknown option: " ;
       cout << "\"" << line << "\"" << endl;
       exit(EXIT_FAILURE);
     }
   }   
 }
 
-Detector * CalibrationConfig::BuildDetector(ifstream &configFile)
+Detector * ConfigParser::BuildDetector(ifstream &configFile)
 {
   string line, option;
   //First, we make sure the first option specifies a detector type. Then we construct it.
   getline(configFile,line);
   option = GetOption(line);
   if(option != "TYPE"){
-    cout << "CalibrationConfig::BuildDetector(): The first option must specify a \"TYPE\"." ;
+    cout << "ConfigParser::BuildDetector(): The first option must specify a \"TYPE\"." ;
     cout << endl;
     exit(EXIT_FAILURE);
   }
@@ -54,7 +59,7 @@ Detector * CalibrationConfig::BuildDetector(ifstream &configFile)
     else if(option == "ROTZ") d->RotateZ(stod(GetValue(line)));
     else if(option == "DEADLAYER") d->SetDeadLayer(stod(GetValue(line)));
     else{
-      cout << "CalibrationConfig::BuildDetector(): Unknown option: \"" ;
+      cout << "ConfigParser::BuildDetector(): Unknown option: \"" ;
       cout << option << "\"" << endl;
       exit(EXIT_FAILURE);
     }
@@ -62,14 +67,14 @@ Detector * CalibrationConfig::BuildDetector(ifstream &configFile)
   return d;
 }
     
-PeakFinder * CalibrationConfig::BuildPeakFinder(ifstream &configFile)
+PeakFinder * ConfigParser::BuildPeakFinder(ifstream &configFile)
 {
   string line, option;
   //First, we make sure the first option specifies an algorithm type. Then we construct it.
   getline(configFile,line);
   option = GetOption(line);
   if(option != "TYPE"){
-    cout << "CalibrationConfig::BuildPeakFinder(): The first option must specify a \"TYPE\"." ;
+    cout << "ConfigParser::BuildPeakFinder(): The first option must specify a \"TYPE\"." ;
     cout << endl;
     exit(EXIT_FAILURE);
   }
@@ -84,7 +89,7 @@ PeakFinder * CalibrationConfig::BuildPeakFinder(ifstream &configFile)
     else if(option == "HIGHTHRES") p->SetHighThreshold(stod(GetValue(line)));
     else if(option == "MINHEIGHT") p->SetMinHeight(stod(GetValue(line)));
     else{
-      cout << "CalibrationConfig::BuildPeakFinder(): Unknown option: \"" ;
+      cout << "ConfigParser::BuildPeakFinder(): Unknown option: \"" ;
       cout << option << "\"" << endl;
       exit(EXIT_FAILURE);
     }
@@ -92,14 +97,14 @@ PeakFinder * CalibrationConfig::BuildPeakFinder(ifstream &configFile)
   return p;
 }
 
-Source * CalibrationConfig::BuildSource(ifstream &configFile)
+Source * ConfigParser::BuildSource(ifstream &configFile)
 {
   string line, option;
   //First, we make sure the first option specifies a particle type. Then we construct it.
   getline(configFile,line);
   option = GetOption(line);
   if(option != "TYPE"){
-    cout << "CalibrationConfig::BuildSource(): The first option must specify a \"TYPE\"." ;
+    cout << "ConfigParser::BuildSource(): The first option must specify a \"TYPE\"." ;
     cout << endl;
     exit(EXIT_FAILURE);
   }
@@ -115,7 +120,7 @@ Source * CalibrationConfig::BuildSource(ifstream &configFile)
     else if(option == "POSZ") s->SetZ(stod(GetValue(line)));
     else if(option == "PEAK") s->AddPeak(stod(GetValue(line)));
     else{
-      cout << "CalibrationConfig::BuildSource(): Unknown option: \"" ;
+      cout << "ConfigParser::BuildSource(): Unknown option: \"" ;
       cout << option << "\"" << endl;
       exit(EXIT_FAILURE);
     }
@@ -123,7 +128,7 @@ Source * CalibrationConfig::BuildSource(ifstream &configFile)
   return s;
 }
 
-Options * CalibrationConfig::BuildOptions(ifstream &configFile)
+Options * ConfigParser::BuildOptions(ifstream &configFile)
 {
   string line, option;
   Options *o = new Options();
@@ -138,7 +143,7 @@ Options * CalibrationConfig::BuildOptions(ifstream &configFile)
     else if(option == "CHANNEL") o->channelBranch = GetValue(line);
     else if(option == "OFFSET") o->offset = stoi(GetValue(line));
     else{
-      cout << "CalibrationConfig::BuildOptions(): Unknown option: \"" ;
+      cout << "ConfigParser::BuildOptions(): Unknown option: \"" ;
       cout << option << "\"" << endl;
       exit(EXIT_FAILURE);
     }
@@ -146,11 +151,11 @@ Options * CalibrationConfig::BuildOptions(ifstream &configFile)
   return o;
 }
 
-string CalibrationConfig::GetOption(string &line)
+string ConfigParser::GetOption(string &line)
 {
   size_t pos = line.find_first_not_of(" ");
   if(pos != 2){
-    //cout << "CalibrationConfig()::GetOption(): This line does not specify an option: \"";
+    //cout << "ConfigParser()::GetOption(): This line does not specify an option: \"";
     //cout << line << "\"" << endl;
     return "";
   }
@@ -159,27 +164,32 @@ string CalibrationConfig::GetOption(string &line)
   }
 }
 
-string CalibrationConfig::GetValue(string &line)
+string ConfigParser::GetValue(string &line)
 {
   return line.substr(line.find_last_of(" ")+1,line.length());
 }
     
-shared_ptr<Detector> CalibrationConfig::GetDetector()
+shared_ptr<Detector> ConfigParser::GetDetector()
 {
   return detector;
 }
 
-shared_ptr<PeakFinder> CalibrationConfig::GetPeakFinder()
+shared_ptr<PeakFinder> ConfigParser::GetPeakFinder()
 {
   return peakFinder;
 }
 
-shared_ptr<Source> CalibrationConfig::GetSource()
+shared_ptr<Source> ConfigParser::GetSource()
 {
   return source;
 }
 
-shared_ptr<Options> CalibrationConfig::GetOptions()
+shared_ptr<Options> ConfigParser::GetOptions()
 {
   return options;
+}
+
+void ConfigParser::PrintConfiguration()
+{
+  
 }

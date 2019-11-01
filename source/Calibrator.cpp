@@ -152,6 +152,7 @@ void Calibrator::EvalAndLog(vector<shared_ptr<TH1>> spectra,
     }
     //Create histogram.
     TH2I hist("channelComparison","",spectra.size(),-0.5,spectra.size()-0.5,1000,0,Emax);
+    hist.SetOption("colz");
     for(int i=0; i<spectra.size(); i++){
       int nBins = spectra.at(i)->GetNbinsX();
       double gain = result.at(i).at(0);
