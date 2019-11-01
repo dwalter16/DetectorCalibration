@@ -18,6 +18,9 @@ void CalibrationConfig::Parse(string fileName)
     else if(line == "SOURCE"){
       source = shared_ptr<Source>(BuildSource(configFile));
     }
+    else if(line == "OPTIONS"){
+      options = shared_ptr<Options>(BuildOptions(configFile));
+    }
     else{
       cout << "CalibrationConfig::Parse(): Unknown option: " ;
       cout << "\"" << line << "\"" << endl;
@@ -50,8 +53,6 @@ Detector * CalibrationConfig::BuildDetector(ifstream &configFile)
     else if(option == "ROTY") d->RotateY(stod(GetValue(line)));
     else if(option == "ROTZ") d->RotateZ(stod(GetValue(line)));
     else if(option == "DEADLAYER") d->SetDeadLayer(stod(GetValue(line)));
-    else if(option == "ENERGY") d->SetEnergyBranch(GetValue(line));
-    else if(option == "CHANNEL") d->SetChannelBranch(GetValue(line));
     else{
       cout << "CalibrationConfig::BuildDetector(): Unknown option: \"" ;
       cout << option << "\"" << endl;
@@ -122,6 +123,29 @@ Source * CalibrationConfig::BuildSource(ifstream &configFile)
   return s;
 }
 
+Options * CalibrationConfig::BuildOptions(ifstream &configFile)
+{
+  string line, option;
+  Options *o = new Options();
+  while(getline(configFile,line)){
+    option = GetOption(line);
+    if(option.empty()) break; //An empty line means the configuration is complete.
+    else if(option == "NBINS") o->nBins = stoi(GetValue(line));
+    else if(option == "MIN") o->min = stod(GetValue(line));
+    else if(option == "MAX") o->max = stod(GetValue(line));
+    else if(option == "TREE") o->tree = GetValue(line);
+    else if(option == "ENERGY") o->energyBranch = GetValue(line);
+    else if(option == "CHANNEL") o->channelBranch = GetValue(line);
+    else if(option == "OFFSET") o->offset = stoi(GetValue(line));
+    else{
+      cout << "CalibrationConfig::BuildOptions(): Unknown option: \"" ;
+      cout << option << "\"" << endl;
+      exit(EXIT_FAILURE);
+    }
+  }
+  return o;
+}
+
 string CalibrationConfig::GetOption(string &line)
 {
   size_t pos = line.find_first_not_of(" ");
@@ -153,4 +177,9 @@ shared_ptr<PeakFinder> CalibrationConfig::GetPeakFinder()
 shared_ptr<Source> CalibrationConfig::GetSource()
 {
   return source;
+}
+
+shared_ptr<Options> CalibrationConfig::GetOptions()
+{
+  return options;
 }

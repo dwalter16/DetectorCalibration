@@ -21,10 +21,6 @@ class Detector {
     TVector3 orientation; /**< A vector defining the orientation of the detector.*/
     double deadLayer;     /**< Thickness of the detector dead layer*/
     
-    std::string energyBranch;
-    std::string channelBranch;
-    
-    
   public:
     Detector() = default;
     virtual ~Detector() = default;
@@ -126,13 +122,5 @@ class Detector {
      * @param pos is the TVector pointing to the calibration source location
      */
     virtual double GetEffectiveThickness(int i, TVector3 &pos);
-    
-    void SetEnergyBranch(std::string branchName);
-    
-    void SetChannelBranch(std::string branchName);
-    
-    std::string GetEnergyBranch();
-    
-    std::string GetChannelBranch();
 };
 #endif

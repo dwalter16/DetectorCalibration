@@ -3,6 +3,7 @@
 #include "Detector.h"
 #include "PeakFinder.h"
 #include "Source.h"
+#include "Options.h"
 #include <memory>
 #include <string>
 #include <fstream>
@@ -12,6 +13,7 @@ class CalibrationConfig {
     std::shared_ptr<Detector> detector;
     std::shared_ptr<PeakFinder> peakFinder;
     std::shared_ptr<Source> source;
+    std::shared_ptr<Options> options;
     
     std::string GetOption(std::string &line);
     
@@ -23,6 +25,8 @@ class CalibrationConfig {
     
     Source * BuildSource(std::ifstream &configFile);
     
+    Options * BuildOptions(std::ifstream &configFile);
+    
   public:
     CalibrationConfig() = default;
     ~CalibrationConfig() = default;
@@ -33,6 +37,8 @@ class CalibrationConfig {
     
     std::shared_ptr<PeakFinder> GetPeakFinder();
     
-    std::shared_ptr<Source> GetSource();    
+    std::shared_ptr<Source> GetSource();
+    
+    std::shared_ptr<Options> GetOptions();  
 };
 #endif

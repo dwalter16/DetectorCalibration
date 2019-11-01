@@ -6,17 +6,16 @@
 #include <vector>
 #include <array>
 #include <fstream>
-#include <TF1.h>
 #include <TH1.h>
-#include <TH1I.h>
 #include <TH2I.h>
-#include <TVector3.h>
 #include <TFile.h>
 #include <TTree.h>
+#include "Options.h"
 #include "Source.h"
 #include "PeakFinder.h"
 #include "Detector.h"
 #include "Calibrator.h"
+#include "Options.h"
 #include "CalibrationConfig.h"
 
 using namespace std;
@@ -70,6 +69,7 @@ int main(int argc , char *argv[])
   shared_ptr<Source> source = config.GetSource();
   shared_ptr<Detector> detector = config.GetDetector();
   shared_ptr<PeakFinder> peakFinder = config.GetPeakFinder();
+  shared_ptr<Options> options = config.GetOptions();
   Calibrator calibrator;
   calibrator.SetPeakFinder(peakFinder);
   if(!logFile.empty()) calibrator.SetLogFile(logFile);
@@ -88,9 +88,9 @@ int main(int argc , char *argv[])
   
   //Then we produce the histograms from the data file.
   TFile data(dataFile.c_str(),"READ");
-  TTree *tree = (TTree*)data.Get("Iris");
-  TH2I hist("hist","",nChannels,-0.5,nChannels-0.5,4096,-0.5,4095.5);
-  string drawCmd = detector->GetEnergyBranch() + ":" + detector->GetChannelBranch() + ">>hist";
+  TTree *tree = (TTree*)data.Get(options->tree.c_str());
+  TH2I hist("hist","",nChannels,-0.5,nChannels-0.5,options->nBins,options->min,options->max);
+  string drawCmd = options->energyBranch + ":" + options->channelBranch + ">>hist";
   tree->Draw(drawCmd.c_str());
   hist.SetDirectory(0);
   data.Close();
@@ -104,43 +104,18 @@ int main(int argc , char *argv[])
   
   //Then we are ready to run the calibration routine.
   vector<array<double,2>> result = calibrator.Calibrate(spectra,energies);
+  
+  //..and store the output in a plain text file.
   if(!outputFile.empty()){
     ofstream output(outputFile);
     output << "ch  offset  gain" << endl;
     for(int i=0; i<nChannels; i++){
-      output << i << "  " << result.at(i).at(1) << "  " << result.at(i).at(0) << endl;
+      int channel = i + options->offset;
+      output << channel << "  " << result.at(i).at(1) << "  " << result.at(i).at(0) << endl;
     }
     output.close();
   }
     
-  
-  /*
-  TF1 f("f","TMath::Gaus(x,1000,10)+TMath::Gaus(x,2000,15)",0,4096);
-  vector<shared_ptr<TH1>> spectra;
-  vector<vector<double>> energies;
-  for(int i=0; i<10; i++){
-    char name[32];
-    sprintf(name,"h_%d",i);
-    shared_ptr<TH1I> h(new TH1I(name,"",4096,0,4096));
-    h->FillRandom("f",500);
-    spectra.push_back(h);
-    vector<double> e = {0.8, 1.5};
-    energies.push_back(e);
-  }
-
-  Calibrator c;
-  c.SetLogFile("test.root");
-  c.GetPeakFinder().SetSigma(10);
-  c.Calibrate(spectra,energies);
-  */
-  /*
-  YY1Detector Yu1;
-  TVector3 source(0.,0.,0.);
-  Yu1.SetPosition(0.,0.,-90.);
-  for(int i=0; i<16; i++){
-    cout << Yu1.GetSegSolidAngle(i,source) << "\t" << Yu1.GetEffectiveThickness(i,source) << endl;
-  }
-  */
   return 0;
 }
 

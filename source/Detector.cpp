@@ -127,23 +127,3 @@ double Detector::GetEffectiveThickness(int i, TVector3 &pos)
 
   return teff;
 }
-
-void Detector::SetEnergyBranch(string branchName)
-{
-  energyBranch = branchName;
-}
-    
-void Detector::SetChannelBranch(string branchName)
-{
-  channelBranch = branchName;
-}
-    
-string Detector::GetEnergyBranch()
-{
-  return energyBranch;
-}
-    
-string Detector::GetChannelBranch()
-{
-  return channelBranch;
-}
