@@ -191,5 +191,43 @@ shared_ptr<Options> ConfigParser::GetOptions()
 
 void ConfigParser::PrintConfiguration()
 {
+  cout << "Calibration configuration:" << endl;
+  cout << "Detector:" << endl ;
+  cout << "  position = (" ;
+  cout << detector->GetPosition().x() << "," ;
+  cout << detector->GetPosition().y() << "," ;
+  cout << detector->GetPosition().z() << ")" << endl;
+  cout << "  normal = (" ;
+  cout << detector->GetNormal().x() << "," ;
+  cout << detector->GetNormal().y() << "," ;
+  cout << detector->GetNormal().z() << ")" << endl;
+  cout << "  orientation = (" ;
+  cout << detector->GetOrientation().x() << "," ;
+  cout << detector->GetOrientation().y() << "," ;
+  cout << detector->GetOrientation().z() << ")" << endl;
   
+  cout << "Source:" << endl;
+  cout << "  type = " << source->GetParticle() << endl;
+  cout << "  position = (" ;
+  cout << source->GetPosition().x() << "," ;
+  cout << source->GetPosition().y() << "," ;
+  cout << source->GetPosition().z() << ")" << endl;
+  for(int i=0; i<source->GetNPeaks(); i++){
+    cout << "  peak " << i+1 << " = " << source->GetPeak(i) << endl;
+  }
+  
+  cout << "Algorithm:" << endl;
+  cout << "  sigma = " << peakFinder->GetSigma() << endl;
+  cout << "  min. threshold = " << peakFinder->GetLowThreshold() << endl;
+  cout << "  max. threshold = " << peakFinder->GetHighThreshold() << endl;
+  cout << "  min. height = " << peakFinder->GetMinHeight() << endl;
+  
+  cout << "Options:" << endl;
+  cout << "  tree = " << options->tree << endl;
+  cout << "  energy = " << options->energyBranch << endl;
+  cout << "  channel = " << options->channelBranch << endl;
+  cout << "  offset = " << options->offset << endl;
+  cout << "  no. bins = " << options->nBins << endl;
+  cout << "  range min. = " << options->min << endl;
+  cout << "  range max. = " << options->max << endl;
 }

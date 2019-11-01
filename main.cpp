@@ -69,6 +69,7 @@ int main(int argc , char *argv[])
     return 1;
   }
   ConfigParser config(configFile);
+  config.PrintConfiguration();
   shared_ptr<Source> source = config.GetSource();
   shared_ptr<Detector> detector = config.GetDetector();
   shared_ptr<PeakFinder> peakFinder = config.GetPeakFinder();
@@ -117,10 +118,10 @@ int main(int argc , char *argv[])
       ss >> channel >> pedestal ;
       pedestals.push_back(pedestal);
     }
-  }
-  if(pedestals.size() != nChannels){
-    cout << "Pedestal file does not contain the expected number of values.";
-    return 1;
+    if(pedestals.size() != nChannels){
+      cout << "Pedestal file does not contain the expected number of values.";
+      return 1;
+    }
   }
     
   //Then we are ready to run the calibration routine.
@@ -152,6 +153,7 @@ void PrintHelp(char *argv[])
   cout << "  -h             Print this message." << endl;
   cout << "  -l [FILE]      Store logging information in [FILE] (optional)." << endl;
   cout << "  -o [FILE]      Store calibration coefficients in [FILE] (optional)." << endl;
+  cout << "  -p [FILE]      Load pedestals from [FILE] (optional)." << endl;
   cout << endl;
   cout << "Example:" << endl;
   cout << argv[0] << " -c /config/file -o /output/file /data/file" << endl;
