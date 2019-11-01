@@ -51,8 +51,16 @@ class PeakFinder {
 
     double GetSigma();
     
+    /**
+     * Set the minimum of the spectrum range to be searched for peaks.
+     * @param threshold Lower limit of the searched spectrum.
+     */
     void SetLowThreshold(double threshold);
-    
+
+    /**
+     * Set the maximum of the spectrum range to be searched for peaks.
+     * @param threshold Upper limit of the searched spectrum.
+     */    
     void SetHighThreshold(double threshold);
     
     /**
